@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/dnd-encounter/static/css/main.5f361e03.chunk.css",
+    "main.js": "/dnd-encounter/static/js/main.b05bbc50.chunk.js",
+    "main.js.map": "/dnd-encounter/static/js/main.b05bbc50.chunk.js.map",
+    "runtime-main.js": "/dnd-encounter/static/js/runtime-main.7f83624e.js",
+    "runtime-main.js.map": "/dnd-encounter/static/js/runtime-main.7f83624e.js.map",
+    "static/js/2.bab5d0db.chunk.js": "/dnd-encounter/static/js/2.bab5d0db.chunk.js",
+    "static/js/2.bab5d0db.chunk.js.map": "/dnd-encounter/static/js/2.bab5d0db.chunk.js.map",
+    "index.html": "/dnd-encounter/index.html",
+    "precache-manifest.49d8bfa387c34c8cc7562dd1050922fe.js": "/dnd-encounter/precache-manifest.49d8bfa387c34c8cc7562dd1050922fe.js",
+    "service-worker.js": "/dnd-encounter/service-worker.js",
+    "static/css/main.5f361e03.chunk.css.map": "/dnd-encounter/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.bab5d0db.chunk.js.LICENSE.txt": "/dnd-encounter/static/js/2.bab5d0db.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/dnd-encounter/static/media/logo.5d5d9eef.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.7f83624e.js",
+    "static/js/2.bab5d0db.chunk.js",
+    "static/css/main.5f361e03.chunk.css",
+    "static/js/main.b05bbc50.chunk.js"
+  ]
+}
