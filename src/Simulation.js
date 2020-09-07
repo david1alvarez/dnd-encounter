@@ -1,4 +1,5 @@
 import React from 'react'
+import './Simulation.css'
 
 export default class Simulation extends React.Component {
     shuffleArray(array) {
@@ -21,12 +22,63 @@ export default class Simulation extends React.Component {
         }
     }
 
-    createEncounterOrder(method, encounter, isPlayersTurn) {
+    rollInitiative(creature) {
+        return this.rollDie(20) + creature.initiative
+    }
+
+    runEncounter(monsterMethod, playerMethod) {
+        let encounter = JSON.parse(JSON.stringify(this.props.encounter));
+        encounter = this.createTargetingOrder(monsterMethod, encounter, true);
+        encounter = this.createTargetingOrder(playerMethod, encounter, false)
+        let initiativeOrder = []
+
+        encounter.monsters.forEach((monster, index) => {
+            let initiative = this.rollInitiative(monster);
+            initiativeOrder.push({initiative: initiative, index: index, isPlayer: false})
+        })
+        encounter.players.forEach((player, index) => {
+            let initiative = this.rollInitiative(player);
+            initiativeOrder.push({initiative: initiative, index: index, isPlayer: true})
+        })
+
+        initiativeOrder.sort((a, b) => {return (a.initiative - b.initiative)})
+
+        initiativeOrder.forEach(turnSlot => {
+            if (turnSlot.isPlayer) {
+                if(playerMethod === 0) {
+                    encounter = this.createTargetingOrder(playerMethod, encounter, false)
+                }
+                this.monsters = this.attackEnemies(encounter.players[turnSlot.index], encounter.monsters)
+            } else {
+                if(monsterMethod === 0) {
+                    encounter = this.createTargetingOrder(monsterMethod, encounter, true)
+                }
+                this.players = this.attackEnemies(encounter.monsters[turnSlot.index], encounter.players)
+            }
+        })
+        return encounter
+    }
+
+    attackEnemies(creature, enemies) {
+        if (creature.hp <= 0) {return enemies}
+        let enemyIndex = enemies.findIndex(enemy => enemy.hp > 0);
+        if(enemyIndex === -1) {return enemies}
+
+
+        let attackRoll = this.rollDie(20) + creature.bonus;
+        if(attackRoll >= enemies[enemyIndex].ac) {
+            let damageDealt = this.rollDamage(creature.damage);
+            enemies[enemyIndex].hp = enemies[enemyIndex].hp - damageDealt;
+        }
+        return enemies
+    }
+
+    createTargetingOrder(method, encounter, sortingPlayers) {
         let newEncounter = JSON.parse(JSON.stringify(encounter))
-        if (isPlayersTurn) {
-            newEncounter.monsters = this.sortCreatures(method, newEncounter.monsters)
-        } else {
+        if (sortingPlayers) {
             newEncounter.players = this.sortCreatures(method, newEncounter.players)
+        } else {
+            newEncounter.monsters = this.sortCreatures(method, newEncounter.monsters)
         }
         return newEncounter
     }
@@ -47,61 +99,13 @@ export default class Simulation extends React.Component {
         return damageDone
     }
 
-    attackEnemies(creatures, enemies) {
-        creatures.forEach(creature => {
-            if (creature.hp <= 0) {return}
-            let enemyIndex = enemies.findIndex(enemy => enemy.hp > 0);
-            if(enemyIndex === -1) {return}
-            let attackRoll = this.rollDie(20) + creature.bonus;
-            if(attackRoll >= enemies[enemyIndex].ac) {
-                let damageDealt = this.rollDamage(creature.damage);
-                enemies[enemyIndex].hp = enemies[enemyIndex].hp - damageDealt;
-            }
-        })
-        return enemies
-    }
-
-    runEncounter(monsterMethod, playerMethod, cancel) {
-        // we need to deep copy the object here with JSON.parse(JSON.Stringify(obj)). 
-        // Object.assign() is shallow copy, and sub-surface-level parameters will 
-        // still point to the original object's parameters
-        let encounter = JSON.parse(JSON.stringify(this.props.encounter));
-        encounter = this.createEncounterOrder(monsterMethod, encounter, false);
-        encounter = this.createEncounterOrder(playerMethod, encounter, true)
-        let turn = 1;
-
-        while(!cancel
-            && turn < 400
-            && encounter.monsters.find(monster => monster.hp > 0) !== undefined
-            && encounter.players.find(player => player.hp > 0) !== undefined
-        ) {
-            if (turn % 2) {
-                // monsters turn
-                if(monsterMethod === 0) {
-                    encounter = this.createEncounterOrder(monsterMethod, encounter, false)
-                }
-                encounter.players = this.attackEnemies(encounter.monsters, encounter.players);
-            } else {
-                // players turn
-                if(playerMethod === 0) {
-                    encounter = this.createEncounterOrder(playerMethod, encounter, true)
-                }
-                encounter.monsters = this.attackEnemies(encounter.players, encounter.monsters);
-            }
-            turn++
-        }
-        encounter.turns = Math.ceil(turn / 2.0)
-        return encounter
-    }
-
-
     simulateOutcome = () => {
         let outcomes = []
         for (let i = 0; i < this.props.encounter.attempts; i++) {
             let outcome = this.runEncounter(
                             parseInt(this.props.encounter.monsterMethod),
-                            parseInt(this.props.encounter.playerMethod),
-                            this.props.encounter.cancel
+                            parseInt(this.props.encounter.playerMethod)
+                            // this.props.encounter.cancel
                         )
 
             outcome.playersDowned = 0;
@@ -123,12 +127,12 @@ export default class Simulation extends React.Component {
                 {this.showResults}
                 {this.state
                     ? Array.apply(0, Array(this.props.encounter.players.length+1)).map((_, i) => {
-                        let rounds = 0;
+                        let encounters = 0;
                         this.state.outcomes.forEach(outcome => {
-                            if (outcome.playersDowned === i) { rounds++; }
+                            if (outcome.playersDowned === i) { encounters++; }
                         })
-                        let percentage = (parseFloat(rounds / this.state.outcomes.length) * 100).toFixed(1)
-                        return <div>{i} players die in {rounds} rounds ({percentage}%)</div>
+                        let percentage = (parseFloat(encounters / this.state.outcomes.length) * 100).toFixed(1)
+                        return <div key={i}>{i} players die in {encounters} encounters ({percentage}%)</div>
                     })
                     : <div></div>
                 }

@@ -25,3 +25,21 @@ h1 {
     margin-inline-start: 0px;
     margin-inline-end: 0px;
 }
+
+.center {
+    display: flex;
+    justify-content: space-around;
+}
+
+.dropdown {
+    max-width: 150px;
+}
+
+.spread-right-left {
+    display: flex;
+    justify-content: space-between;
+}
+
+.center-text {
+    text-align: center;
+}
