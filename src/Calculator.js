@@ -30,27 +30,44 @@ export default class Calculator extends React.Component {
 
     setTestData = () => {
         let testPlayers = [
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 }
+            { hp: 20, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 21, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 22, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 23, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 }
         ]
         let testEnemies = [
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 20, ac: 18, bonus: 6, damage: "1d8+3", initiative: 2 }
+            { hp: 20, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 21, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 22, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 23, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 }
         ]
         this.setState({players: testPlayers, monsters: testEnemies})
     }
 
     handleUpdateStats = (creature, i, isPlayer) => {
         if(isPlayer) {
-            let newPlayers = [...this.state.players];
+            let newPlayers = [...this.state.players].map(player => {
+                return {
+                    hp: parseInt(player.hp), 
+                    ac: parseInt(player.ac), 
+                    bonus: parseInt(player.bonus),
+                    damage: player.damage,
+                    initiative: parseInt(player.initiative)
+                }
+            });
+            
             newPlayers[i] = creature;
             this.setState({players: newPlayers})
         } else {
-            let newMonsters = [...this.state.monsters];
+            let newMonsters = [...this.state.monsters].map(monster => {
+                return {
+                    hp: parseInt(monster.hp), 
+                    ac: parseInt(monster.ac), 
+                    bonus: parseInt(monster.bonus),
+                    damage: monster.damage,
+                    initiative: parseInt(monster.initiative)
+                }
+            });
             newMonsters[i] = creature;
             this.setState({monsters: newMonsters})
         }

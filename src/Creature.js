@@ -4,19 +4,33 @@ import './Creature.css'
 export default class Creature extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {creature: {}}
+        // this.state = {creature: {}}
         this.handleUpdateStats = this.handleUpdateStats.bind(this);
     }
 
+    castToInt(input) {
+        if (input === "") {
+            return input
+        } else {
+            return parseInt(input)
+        }
+    }
+
+    /*
+        state should be offloaded to props? props are set to parent's state, so having the child have an independent concept of the state is faulty.
+        Child should tell parent to update state
+    */
+
+
     handleUpdateStats = (newHp, newAc, newBonus, newDamage, newInitiative) => {
         let newCreature = {
-            hp: newHp !== false ? newHp : this.state.creature.hp,
-            ac: newAc !== false ? newAc : this.state.creature.ac,
-            bonus: newBonus !== false ? newBonus : this.state.creature.bonus,
-            damage: newDamage !== false ? newDamage : this.state.creature.damage,
-            initiative: newInitiative !== false ? newInitiative : this.state.creature.initiative
+            hp: newHp !== false ? this.castToInt(newHp) : this.props.stats.hp,
+            ac: newAc !== false ? this.castToInt(newAc) : this.props.stats.ac,
+            bonus: newBonus !== false ? this.castToInt(newBonus) : this.props.stats.bonus,
+            damage: newDamage !== false ? newDamage : this.props.stats.damage,
+            initiative: newInitiative !== false ? this.castToInt(newInitiative) : this.props.stats.initiative
         }
-        this.setState({creature: newCreature})
+        // this.setState({creature: newCreature}, () => {console.log(this.state)})
         this.props.onUpdateStats(newCreature, this.props.number, this.props.isPlayer)
     }
 

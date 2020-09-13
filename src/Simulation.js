@@ -26,51 +26,83 @@ export default class Simulation extends React.Component {
         return this.rollDie(20) + creature.initiative
     }
 
-    runEncounter(monsterMethod, playerMethod) {
+    runEncounter() {
         let encounter = JSON.parse(JSON.stringify(this.props.encounter));
-        encounter = this.createTargetingOrder(monsterMethod, encounter, true);
-        encounter = this.createTargetingOrder(playerMethod, encounter, false)
+
         let initiativeOrder = []
-
-        encounter.monsters.forEach((monster, index) => {
-            let initiative = this.rollInitiative(monster);
-            initiativeOrder.push({initiative: initiative, index: index, isPlayer: false})
+        encounter.players.forEach(player => {
+            initiativeOrder.push({...player, isPlayer: true, initiativeRoll: 0, attackMethod: this.props.encounter.playerMethod})
         })
-        encounter.players.forEach((player, index) => {
-            let initiative = this.rollInitiative(player);
-            initiativeOrder.push({initiative: initiative, index: index, isPlayer: true})
+        encounter.monsters.forEach(monster => {
+            initiativeOrder.push({...monster,isPlayer: false, initiativeRoll: 0, attackMethod: this.props.encounter.monsterMethod})
         })
 
-        initiativeOrder.sort((a, b) => {return (a.initiative - b.initiative)})
-
-        initiativeOrder.forEach(turnSlot => {
-            if (turnSlot.isPlayer) {
-                if(playerMethod === 0) {
-                    encounter = this.createTargetingOrder(playerMethod, encounter, false)
-                }
-                this.monsters = this.attackEnemies(encounter.players[turnSlot.index], encounter.monsters)
-            } else {
-                if(monsterMethod === 0) {
-                    encounter = this.createTargetingOrder(monsterMethod, encounter, true)
-                }
-                this.players = this.attackEnemies(encounter.monsters[turnSlot.index], encounter.players)
-            }
+        initiativeOrder.forEach(creature => {
+            creature.initiativeRoll = this.rollInitiative(creature)
         })
-        return encounter
+
+        initiativeOrder.sort((a, b) => {return (b.initiativeRoll - a.initiativeRoll)})
+
+        while (initiativeOrder.findIndex(creature => { return (creature.isPlayer && (creature.hp > 0)) }) !== -1
+            && initiativeOrder.findIndex(creature => { return (!creature.isPlayer && (creature.hp > 0)) }) !== -1
+        ) {
+            // operates under the assumption that the element of the array being edited is not the one currently being evaluated (dont make a creature attack itself)
+            initiativeOrder.forEach(creature => { 
+                console.log(`it is this ${creature.isPlayer ? 'player\'s' : 'monster\s'} turn: `)
+                console.log(creature)
+                initiativeOrder = this.attackEnemies(creature, initiativeOrder)
+                // debugger;
+            })
+        }
+
+        return initiativeOrder
     }
 
-    attackEnemies(creature, enemies) {
-        if (creature.hp <= 0) {return enemies}
-        let enemyIndex = enemies.findIndex(enemy => enemy.hp > 0);
-        if(enemyIndex === -1) {return enemies}
+    
+    attackEnemies(creature, initiativeOrder) {
+        // probable bug in the enemy identification logic
+        // other alternative: bug in the turn taking logic
 
-
-        let attackRoll = this.rollDie(20) + creature.bonus;
-        if(attackRoll >= enemies[enemyIndex].ac) {
-            let damageDealt = this.rollDamage(creature.damage);
-            enemies[enemyIndex].hp = enemies[enemyIndex].hp - damageDealt;
+        
+        // determine who to attack
+        let enemyIndex = 0
+        if (creature.attackMethod === 0) { // random order attacks
+            let enemyIndices = []
+            for (let i=0; i < initiativeOrder.length; i++) {
+                if (initiativeOrder[i].isPlayer !== creature.isPlayer) {
+                    enemyIndices.push(i)
+                }
+                if (enemyIndices.length <= 0) {
+                    console.log('no enemies remaining')
+                    return initiativeOrder
+                }
+                enemyIndex = enemyIndices[Math.floor(Math.random() * enemyIndices.length)]
+            }
+        } else {
+            let enemies = []
+            for (let i=0; i < initiativeOrder.length; i++) {
+                if (initiativeOrder[i].isPlayer !== creature.isPlayer) {
+                    enemies.push({index: i, hp: initiativeOrder[i].hp, ac: initiativeOrder[i].ac})
+                }
+                if (enemies.length <= 0) {
+                    console.log('no enemies remaining')
+                    return initiativeOrder
+                }
+                enemies = this.sortCreatures(creature.attackMethod, enemies)
+            }
+            enemyIndex = enemies[0].index
         }
-        return enemies
+
+        // attack them
+        if(this.rollAttack(creature.bonus) >= initiativeOrder[enemyIndex].ac) {
+            initiativeOrder[enemyIndex].hp -= this.rollDamage(creature.damage)
+        }
+
+        // filter out killed creatures
+        if (initiativeOrder[enemyIndex].hp <= 0) {
+            initiativeOrder.splice(enemyIndex, 1)
+        }
+        return initiativeOrder
     }
 
     createTargetingOrder(method, encounter, sortingPlayers) {
@@ -89,33 +121,33 @@ export default class Simulation extends React.Component {
 
     rollDamage(dice) {
         let damageDone = 0;
-        dice.split(' ').forEach(damageDie => {
+        dice = dice.split(' ').forEach(damageDie => {
             let dice = damageDie.split(/[+d]+/);
-            for (let i = 0; i < dice[0]; i++) {
-                damageDone += this.rollDie(dice[1]);
-                if(dice.length === 3) {damageDone += dice[2];}
+            for (let i = 0; i < parseInt(dice[0]); i++) {
+                damageDone += parseInt(this.rollDie(dice[1]));
+                if(dice.length === 3) {damageDone += parseInt(dice[2]);}
             }
         })
         return damageDone
     }
 
+    rollAttack(bonus) {
+        return this.rollDie(20) + bonus
+    }
+
     simulateOutcome = () => {
         let outcomes = []
         for (let i = 0; i < this.props.encounter.attempts; i++) {
-            let outcome = this.runEncounter(
-                            parseInt(this.props.encounter.monsterMethod),
-                            parseInt(this.props.encounter.playerMethod)
-                            // this.props.encounter.cancel
-                        )
 
-            outcome.playersDowned = 0;
-            outcome.players.forEach(player => {
-                if (player.hp <= 0) {
-                    outcome.playersDowned++
+            let survivors = this.runEncounter()
+            let playersAlive = 0;
+            survivors.forEach(creature => {
+                if (creature.isPlayer && creature.hp > 0) {
+                    playersAlive++
                 }
             })
 
-            outcomes.push(outcome)
+            outcomes.push(this.props.encounter.players.length - playersAlive)
         }
         this.setState({outcomes: outcomes})
     }
@@ -129,7 +161,7 @@ export default class Simulation extends React.Component {
                     ? Array.apply(0, Array(this.props.encounter.players.length+1)).map((_, i) => {
                         let encounters = 0;
                         this.state.outcomes.forEach(outcome => {
-                            if (outcome.playersDowned === i) { encounters++; }
+                            if (outcome === i) { encounters++; }
                         })
                         let percentage = (parseFloat(encounters / this.state.outcomes.length) * 100).toFixed(1)
                         return <div key={i}>{i} players die in {encounters} encounters ({percentage}%)</div>
