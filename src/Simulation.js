@@ -43,16 +43,16 @@ export default class Simulation extends React.Component {
 
         initiativeOrder.sort((a, b) => {return (b.initiativeRoll - a.initiativeRoll)})
 
+        // cycle through the initiativeOrder array until one side dies
+        let i = 0
         while (initiativeOrder.findIndex(creature => { return (creature.isPlayer && (creature.hp > 0)) }) !== -1
             && initiativeOrder.findIndex(creature => { return (!creature.isPlayer && (creature.hp > 0)) }) !== -1
         ) {
-            // operates under the assumption that the element of the array being edited is not the one currently being evaluated (dont make a creature attack itself)
-            initiativeOrder.forEach(creature => { 
-                console.log(`it is this ${creature.isPlayer ? 'player\'s' : 'monster\s'} turn: `)
-                console.log(creature)
-                initiativeOrder = this.attackEnemies(creature, initiativeOrder)
-                // debugger;
-            })
+            if (i >= initiativeOrder.length) {
+                i = 0
+            }
+            initiativeOrder = this.attackEnemies(initiativeOrder[i], initiativeOrder)
+            i++
         }
 
         return initiativeOrder
@@ -60,10 +60,6 @@ export default class Simulation extends React.Component {
 
     
     attackEnemies(creature, initiativeOrder) {
-        // probable bug in the enemy identification logic
-        // other alternative: bug in the turn taking logic
-
-        
         // determine who to attack
         let enemyIndex = 0
         if (creature.attackMethod === 0) { // random order attacks
@@ -72,24 +68,24 @@ export default class Simulation extends React.Component {
                 if (initiativeOrder[i].isPlayer !== creature.isPlayer) {
                     enemyIndices.push(i)
                 }
-                if (enemyIndices.length <= 0) {
-                    console.log('no enemies remaining')
-                    return initiativeOrder
-                }
-                enemyIndex = enemyIndices[Math.floor(Math.random() * enemyIndices.length)]
             }
+            if (enemyIndices.length <= 0) {
+                console.log('no enemies remaining')
+                return initiativeOrder
+            }
+            enemyIndex = enemyIndices[Math.floor(Math.random() * enemyIndices.length)]
         } else {
             let enemies = []
             for (let i=0; i < initiativeOrder.length; i++) {
                 if (initiativeOrder[i].isPlayer !== creature.isPlayer) {
                     enemies.push({index: i, hp: initiativeOrder[i].hp, ac: initiativeOrder[i].ac})
                 }
-                if (enemies.length <= 0) {
-                    console.log('no enemies remaining')
-                    return initiativeOrder
-                }
-                enemies = this.sortCreatures(creature.attackMethod, enemies)
             }
+            if (enemies.length <= 0) {
+                console.log('no enemies remaining')
+                return initiativeOrder
+            }
+            enemies = this.sortCreatures(creature.attackMethod, enemies)
             enemyIndex = enemies[0].index
         }
 

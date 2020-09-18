@@ -4,7 +4,6 @@ import './Creature.css'
 export default class Creature extends React.Component {
     constructor(props) {
         super(props);
-        // this.state = {creature: {}}
         this.handleUpdateStats = this.handleUpdateStats.bind(this);
     }
 
@@ -15,12 +14,6 @@ export default class Creature extends React.Component {
             return parseInt(input)
         }
     }
-
-    /*
-        state should be offloaded to props? props are set to parent's state, so having the child have an independent concept of the state is faulty.
-        Child should tell parent to update state
-    */
-
 
     handleUpdateStats = (newHp, newAc, newBonus, newDamage, newInitiative) => {
         let newCreature = {
@@ -55,7 +48,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="number"
                         placeholder={18}
-                        value={this.props.stats?.hp}
+                        value={this.props.stats?.hp || ''} // default value of '' added to maintain controlled component status
                         onChange={event => this.handleUpdateStats(event.target.value, false, false, false, false)}
                     ></input>
                 </div>
@@ -64,7 +57,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="number" 
                         placeholder={16}
-                        value={this.props.stats?.ac}
+                        value={this.props.stats?.ac || ''}
                         onChange={event => this.handleUpdateStats(false, event.target.value, false, false, false)}
                     ></input>
                 </div>
@@ -73,7 +66,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="number" 
                         placeholder={5}
-                        value={this.props.stats?.bonus}
+                        value={this.props.stats?.bonus || ''}
                         onChange={event => this.handleUpdateStats(false, false, event.target.value, false, false)}
                     ></input>
                 </div>
@@ -82,7 +75,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"1d8+3 3d6"}
-                        value={this.props.stats?.damage}
+                        value={this.props.stats?.damage || ''}
                         onChange={event => this.handleUpdateStats(false, false, false, event.target.value, false)}
                     ></input>
                 </div>
@@ -91,7 +84,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"2"}
-                        value={this.props.stats?.initiative}
+                        value={this.props.stats?.initiative || ''}
                         onChange={event => this.handleUpdateStats(false, false, false, false, event.target.value)}
                     ></input>
                 </div>
