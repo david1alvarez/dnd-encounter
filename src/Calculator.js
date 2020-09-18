@@ -162,7 +162,7 @@ export default class Calculator extends React.Component {
                     </select>
                     <div>
                         <div>Number of simulations</div>
-                        <input type="number" placeholder={1} onChange={this.handleUpdateAttempts}></input>
+                        <input type="number" value={this.state.attempts || ''} onChange={this.handleUpdateAttempts}></input>
                     </div>
                     <Simulation encounter={this.state}/>
                 </div>

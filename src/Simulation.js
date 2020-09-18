@@ -13,6 +13,7 @@ export default class Simulation extends React.Component {
     }
 
     sortCreatures(method, array) {
+        method = parseInt(method)
         if(method === 0) { // randomized
             return this.shuffleArray(array);
         } else if (method === 1) { // weakest first 
