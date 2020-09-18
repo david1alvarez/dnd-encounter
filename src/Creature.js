@@ -23,7 +23,6 @@ export default class Creature extends React.Component {
             damage: newDamage !== false ? newDamage : this.props.stats.damage,
             initiative: newInitiative !== false ? this.castToInt(newInitiative) : this.props.stats.initiative
         }
-        // this.setState({creature: newCreature}, () => {console.log(this.state)})
         this.props.onUpdateStats(newCreature, this.props.number, this.props.isPlayer)
     }
 
@@ -46,8 +45,8 @@ export default class Creature extends React.Component {
                 <div className="spread-right-left">
                     <div>HP:&nbsp; </div>
                     <input 
-                        type="number"
-                        placeholder={18}
+                        type="text"
+                        placeholder={"ex: 18"}
                         value={this.props.stats?.hp || ''} // default value of '' added to maintain controlled component status
                         onChange={event => this.handleUpdateStats(event.target.value, false, false, false, false)}
                     ></input>
@@ -55,8 +54,8 @@ export default class Creature extends React.Component {
                 <div className="spread-right-left">
                     <div>AC:&nbsp; </div>
                     <input 
-                        type="number" 
-                        placeholder={16}
+                        type="text" 
+                        placeholder={"ex: 16"}
                         value={this.props.stats?.ac || ''}
                         onChange={event => this.handleUpdateStats(false, event.target.value, false, false, false)}
                     ></input>
@@ -64,8 +63,8 @@ export default class Creature extends React.Component {
                 <div className="spread-right-left">
                     <div>Attack Bonus:&nbsp; </div>
                     <input 
-                        type="number" 
-                        placeholder={5}
+                        type="text" 
+                        placeholder={"ex: 5"}
                         value={this.props.stats?.bonus || ''}
                         onChange={event => this.handleUpdateStats(false, false, event.target.value, false, false)}
                     ></input>
@@ -74,7 +73,7 @@ export default class Creature extends React.Component {
                     <div>Damage per hit:&nbsp; </div>
                     <input 
                         type="text" 
-                        placeholder={"1d8+3 3d6"}
+                        placeholder={"ex: 1d8+3 3d6"}
                         value={this.props.stats?.damage || ''}
                         onChange={event => this.handleUpdateStats(false, false, false, event.target.value, false)}
                     ></input>
@@ -83,7 +82,7 @@ export default class Creature extends React.Component {
                     <div>Initiative bonus:&nbsp; </div>
                     <input 
                         type="text" 
-                        placeholder={"2"}
+                        placeholder={"ex: 2"}
                         value={this.props.stats?.initiative || ''}
                         onChange={event => this.handleUpdateStats(false, false, false, false, event.target.value)}
                     ></input>

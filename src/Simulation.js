@@ -86,7 +86,7 @@ export default class Simulation extends React.Component {
                 return initiativeOrder
             }
             enemies = this.sortCreatures(creature.attackMethod, enemies)
-            enemyIndex = enemies[0].index
+            enemyIndex = enemies[0].index // getting an "enemies is undefined" error here with weakest first targeting method
         }
 
         // attack them
