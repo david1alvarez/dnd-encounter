@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/dnd-encounter/static/css/main.8e19aa0b.chunk.css",
-    "main.js": "/dnd-encounter/static/js/main.6822aa20.chunk.js",
-    "main.js.map": "/dnd-encounter/static/js/main.6822aa20.chunk.js.map",
+    "main.js": "/dnd-encounter/static/js/main.419ab962.chunk.js",
+    "main.js.map": "/dnd-encounter/static/js/main.419ab962.chunk.js.map",
     "runtime-main.js": "/dnd-encounter/static/js/runtime-main.7f83624e.js",
     "runtime-main.js.map": "/dnd-encounter/static/js/runtime-main.7f83624e.js.map",
     "static/js/2.2a0d88d7.chunk.js": "/dnd-encounter/static/js/2.2a0d88d7.chunk.js",
     "static/js/2.2a0d88d7.chunk.js.map": "/dnd-encounter/static/js/2.2a0d88d7.chunk.js.map",
     "index.html": "/dnd-encounter/index.html",
-    "precache-manifest.88374542a601c5a7dd5f692a75366d80.js": "/dnd-encounter/precache-manifest.88374542a601c5a7dd5f692a75366d80.js",
+    "precache-manifest.7f152746d8ae3bf595ee143fca676b62.js": "/dnd-encounter/precache-manifest.7f152746d8ae3bf595ee143fca676b62.js",
     "service-worker.js": "/dnd-encounter/service-worker.js",
     "static/css/main.8e19aa0b.chunk.css.map": "/dnd-encounter/static/css/main.8e19aa0b.chunk.css.map",
     "static/js/2.2a0d88d7.chunk.js.LICENSE.txt": "/dnd-encounter/static/js/2.2a0d88d7.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.7f83624e.js",
     "static/js/2.2a0d88d7.chunk.js",
     "static/css/main.8e19aa0b.chunk.css",
-    "static/js/main.6822aa20.chunk.js"
+    "static/js/main.419ab962.chunk.js"
   ]
 }
