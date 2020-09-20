@@ -83,7 +83,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"ex: 2"}
-                        value={this.props.stats?.initiative || ''}
+                        value={this.props.stats?.initiative || ''} // 0 counts as '', bug alert!
                         onChange={event => this.handleUpdateStats(false, false, false, false, event.target.value)}
                     ></input>
                 </div>

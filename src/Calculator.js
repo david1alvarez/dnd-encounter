@@ -4,6 +4,7 @@ import Simulation from './Simulation'
 import './Calculator.css'
 
 export default class Calculator extends React.Component {
+    // add in names and then displays of how frequencly each player dies
     constructor(props) {
         super(props);
         this.state = {
@@ -16,6 +17,26 @@ export default class Calculator extends React.Component {
         }
         this.addPlayer = this.addPlayer.bind(this)
         this.addMonster = this.addMonster.bind(this)
+        this.fetchSrdList()
+    }
+
+    async fetchSrdList() {
+        let response = await fetch("https://www.dnd5eapi.co/api/monsters")
+        let monsters = await response.json()
+        let monsterUrls = monsters.results.map(monster => monster.url) 
+        let monsterList = []
+        monsterUrls.forEach(async function(url) {
+            try {
+                let response = await fetch("https://www.dnd5eapi.co"+url)
+                let monster = await response.json()
+                monsterList.push(monster)
+            } catch(e) {
+                console.error(e)
+            }
+
+        });
+        console.log(monsterList)
+        this.state.monsterList = monsterList
     }
 
     addPlayer() {
@@ -166,6 +187,7 @@ export default class Calculator extends React.Component {
                     </div>
                     <Simulation encounter={this.state}/>
                 </div>
+                <div>{JSON.stringify(this.state.monsterList)}</div>
             </div>
         )
     }
