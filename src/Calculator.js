@@ -5,6 +5,7 @@ import './Calculator.css'
 
 export default class Calculator extends React.Component {
     // add in names and then displays of how frequencly each player dies
+    // use monsterData.json, filter in place. 1.6mb is big and may require a loading symbol, but would be worth it.
     constructor(props) {
         super(props);
         this.state = {

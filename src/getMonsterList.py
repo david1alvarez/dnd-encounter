@@ -24,6 +24,8 @@ def convertActions(actions):
             "name": action["name"],
             "desc": action["desc"]
         }
+        if "usage" in action:
+            newItem["usage"] = action["usage"]
         if "attack_bonus" in action:
             newItem["attack_bonus"] = action["attack_bonus"]
         if "damage" in action:
@@ -37,6 +39,7 @@ def convertType(monster):
     newType = {}
     newType["name"] = monster["name"]
     newType["armor_class"] = monster["armor_class"]
+    newType["hit_points"] = monster["hit_points"]
     if "actions" in monster:
         newType["actions"] = convertActions(monster["actions"])
     return newType
@@ -46,37 +49,9 @@ monsterList = list(map(convertType, monsterList))
 print(json.dumps(monsterList))
 
 f = open('monsters.json', 'w')
-f.write(json.dumps(monsterList))
+f.write(json.dumps({
+        "comments": "if a creature has the Multiattack action, they then use that. Otherwise, they'll use whichever attack has the highest possible damage",
+        "monsters": monsterList
+        })
+)
 f.close()
-
-# with open('monsters.json', 'w') as outfile:
-#     print(list(monsterList))
-#     json.dump({"monsters": list(monsterList)}, outfile)
-
-
-
-
-
-# import requests
-# import json
-
-# response = requests.get("https://www.dnd5eapi.co/api/monsters")
-
-# vals = response.json()
-# # url_list = map(lambda result: result.url, response.json().results)
-# urls = map(lambda monster: monster["url"], vals["results"])
-# urls = list(urls)
-
-# # monsters = []
-# counter = 0
-# f = open("monsters.txt", "a")
-# for url in urls:
-#     counter += 1
-#     print(url+f' {counter * 100 // len(urls)}')
-#     response = requests.get("https://www.dnd5eapi.co"+url)
-#     values = response.json()
-#     # monsters.append(json)
-#     f.write(json.dumps(values))
-# f.close()
-
-# print(monsters)
