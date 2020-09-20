@@ -39,17 +39,20 @@ def convertType(monster):
     newType["armor_class"] = monster["armor_class"]
     if "actions" in monster:
         newType["actions"] = convertActions(monster["actions"])
-    print(newType)
     return newType
 
-monsterList = map(convertType, monsterList)
+monsterList = list(map(convertType, monsterList))
 
-print(list(monsterList))
+print(json.dumps(monsterList))
 
-monstersDict = {"monsters": list(monsterList)}
+f = open('monsters.json', 'w')
+f.write(json.dumps(monsterList))
+f.close()
 
-with open('monsters.json', 'w') as outfile:
-    json.dump(monstersDict, outfile)
+# with open('monsters.json', 'w') as outfile:
+#     print(list(monsterList))
+#     json.dump({"monsters": list(monsterList)}, outfile)
+
 
 
 
