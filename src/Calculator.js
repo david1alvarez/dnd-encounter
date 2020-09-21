@@ -18,26 +18,6 @@ export default class Calculator extends React.Component {
         }
         this.addPlayer = this.addPlayer.bind(this)
         this.addMonster = this.addMonster.bind(this)
-        this.fetchSrdList()
-    }
-
-    async fetchSrdList() {
-        let response = await fetch("https://www.dnd5eapi.co/api/monsters")
-        let monsters = await response.json()
-        let monsterUrls = monsters.results.map(monster => monster.url) 
-        let monsterList = []
-        monsterUrls.forEach(async function(url) {
-            try {
-                let response = await fetch("https://www.dnd5eapi.co"+url)
-                let monster = await response.json()
-                monsterList.push(monster)
-            } catch(e) {
-                console.error(e)
-            }
-
-        });
-        console.log(monsterList)
-        this.state.monsterList = monsterList
     }
 
     addPlayer() {
@@ -52,16 +32,16 @@ export default class Calculator extends React.Component {
 
     setTestData = () => {
         let testPlayers = [
-            { hp: 20, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 21, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 22, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 23, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 }
+            { hp: 25, ac: 14, bonus: 7, damage: "1d6+3", initiative: 2 },
+            { hp: 50, ac: 16, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 75, ac: 18, bonus: 5, damage: "2d108+3", initiative: 2 },
+            { hp: 100, ac: 20, bonus: 4, damage: "2d12+3", initiative: 2 }
         ]
         let testEnemies = [
-            { hp: 20, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 21, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 22, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 },
-            { hp: 23, ac: 1, bonus: 6, damage: "1d8+3", initiative: 2 }
+            { hp: 25, ac: 14, bonus: 7, damage: "1d6+3", initiative: 2 },
+            { hp: 50, ac: 16, bonus: 6, damage: "1d8+3", initiative: 2 },
+            { hp: 75, ac: 18, bonus: 5, damage: "2d10+3", initiative: 2 },
+            { hp: 100, ac: 20, bonus: 4, damage: "2d12d6+3", initiative: 2 }
         ]
         this.setState({players: testPlayers, monsters: testEnemies})
     }
@@ -96,14 +76,14 @@ export default class Calculator extends React.Component {
     }
 
     handleUpdatePlayerMethod = (event) => {
-        this.setState({playerMethod: event.target.value})
+        this.setState({playerMethod: parseInt(event.target.value)})
     }
     handleUpdateMonsterMethod = (event) => {
-        this.setState({monsterMethod: event.target.value})
+        this.setState({monsterMethod: parseInt(event.target.value)})
     }
 
     handleUpdateAttempts = (event) => {
-        this.setState({attempts: event.target.value})
+        this.setState({attempts: parseInt(event.target.value)})
     }
 
     handleRemoveCreature = (i, isPlayer) => {
@@ -173,14 +153,22 @@ export default class Calculator extends React.Component {
                     <div>Targeting tactics for the players</div>
                     <select className="dropdown" value={this.state.playerMethod} onChange={this.handleUpdatePlayerMethod}>
                         <option value={0}>Random order</option>
-                        <option value={1}>Weakest first</option>
-                        <option value={2}>Strongest first</option>
+                        <option value={1}>Defense: weaker first</option>
+                        <option value={2}>Defense: stronger first</option>
+                        <option value={3}>Offense: weaker first</option>
+                        <option value={4}>Offense: stronger first</option>
+                        <option value={5}>Combined: weaker first</option>
+                        <option value={6}>Combined: stronger first</option>
                     </select>
                     <div>Targeting tactics for the monsters</div>
                     <select className="dropdown" value={this.state.monsterMethod} onChange={this.handleUpdateMonsterMethod}>
                         <option value={0}>Random order</option>
-                        <option value={1}>Weakest first</option>
-                        <option value={2}>Strongest first</option>
+                        <option value={1}>Defense: weaker first</option>
+                        <option value={2}>Defense: stronger first</option>
+                        <option value={3}>Offense: weaker first</option>
+                        <option value={4}>Offense: stronger first</option>
+                        <option value={5}>Combined: weaker first</option>
+                        <option value={6}>Combined: stronger first</option>
                     </select>
                     <div>
                         <div>Number of simulations</div>
@@ -188,7 +176,6 @@ export default class Calculator extends React.Component {
                     </div>
                     <Simulation encounter={this.state}/>
                 </div>
-                <div>{JSON.stringify(this.state.monsterList)}</div>
             </div>
         )
     }

@@ -47,7 +47,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text"
                         placeholder={"ex: 18"}
-                        value={this.props.stats?.hp || ''} // default value of '' added to maintain controlled component status
+                        value={(typeof this.props.stats?.hp === "number") ? this.props.stats?.hp : ''}
                         onChange={event => this.handleUpdateStats(event.target.value, false, false, false, false)}
                     ></input>
                 </div>
@@ -56,7 +56,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"ex: 16"}
-                        value={this.props.stats?.ac || ''}
+                        value={(typeof this.props.stats?.ac === "number") ? this.props.stats?.ac : ''}
                         onChange={event => this.handleUpdateStats(false, event.target.value, false, false, false)}
                     ></input>
                 </div>
@@ -65,7 +65,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"ex: 5"}
-                        value={this.props.stats?.bonus || ''}
+                        value={(typeof this.props.stats?.bonus === "number") ? this.props.stats?.bonus : ''}
                         onChange={event => this.handleUpdateStats(false, false, event.target.value, false, false)}
                     ></input>
                 </div>
@@ -74,7 +74,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"ex: 1d8+3 3d6"}
-                        value={this.props.stats?.damage || ''}
+                        value={(typeof this.props.stats?.damage === "string") ? this.props.stats?.damage : ''}
                         onChange={event => this.handleUpdateStats(false, false, false, event.target.value, false)}
                     ></input>
                 </div>
@@ -83,7 +83,7 @@ export default class Creature extends React.Component {
                     <input 
                         type="text" 
                         placeholder={"ex: 2"}
-                        value={this.props.stats?.initiative || ''} // 0 counts as '', bug alert!
+                        value={(typeof this.props.stats?.initiative === "number") ? this.props.stats?.initiative : ''}
                         onChange={event => this.handleUpdateStats(false, false, false, false, event.target.value)}
                     ></input>
                 </div>

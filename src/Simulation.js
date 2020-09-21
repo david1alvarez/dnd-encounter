@@ -13,13 +13,35 @@ export default class Simulation extends React.Component {
     }
 
     sortCreatures(method, array) {
-        method = parseInt(method)
-        if(method === 0) { // randomized
-            return this.shuffleArray(array);
-        } else if (method === 1) { // weakest first 
-            return array.sort((a, b) => {return (b.ac * b.hp)-(a.ac * a.hp)});
-        } else if (method === 2) { // strongest first
-            return array.sort((a, b) => {return (a.ac * a.hp)-(b.ac * b.hp)});
+        switch(method) {
+            case 0: // random
+                return this.shuffleArray(array);
+            case 1: // weakest defense first
+                return array.sort((a, b) => {return (
+                    (a.ac * a.hp)-(b.ac * b.hp)
+                )});
+            case 2: // strongest defense first
+                return array.sort((a, b) => {return (
+                    (b.ac * b.hp)-(a.ac * a.hp)
+                )});
+            case 3: // weakest attack first
+                return array.sort((a, b) => {return (
+                    (a.bonus * this.calculateMaxDamage(a.damage))-(b.bonus * this.calculateMaxDamage(b.damage))
+                )})
+            case 4: // strongest attack first
+                return array.sort((a, b) => {return (
+                    (b.bonus * this.calculateMaxDamage(b.damage))-(a.bonus * this.calculateMaxDamage(a.damage))
+                )})
+            case 5: // weakest combined first
+                return array.sort((a, b) => {return (
+                    (a.ac * a.hp * a.bonus * this.calculateMaxDamage(a.damage))-(b.ac * b.hp * b.bonus * this.calculateMaxDamage(b.damage))
+                )})
+            case 6: // strongest combined first
+                return array.sort((a, b) => {return (
+                    (b.ac * b.hp * b.bonus * this.calculateMaxDamage(b.damage))-(a.ac * a.hp * a.bonus * this.calculateMaxDamage(a.damage))
+                )})
+            default:
+                console.error('no attack case match')
         }
     }
 
@@ -44,6 +66,16 @@ export default class Simulation extends React.Component {
 
         initiativeOrder.sort((a, b) => {return (b.initiativeRoll - a.initiativeRoll)})
 
+        // sort the player and monster targeting orders for non-random targeting cases
+        let playerTargetingOrder = [] // ordering of which players the monsters will attack first
+        let monsterTargetingOrder = [] // ordering of which monsters the players will attack first
+        if (this.props.encounter.monsterMethod !== 0) {
+            playerTargetingOrder = this.attackingOrder(this.props.encounter.monsterMethod, false, initiativeOrder)
+        }
+        if (this.props.encounter.playerMethod !== 0) {
+            monsterTargetingOrder = this.attackingOrder(this.props.encounter.playerMethod, true, initiativeOrder)
+        }
+
         // cycle through the initiativeOrder array until one side dies
         let i = 0
         while (initiativeOrder.findIndex(creature => { return (creature.isPlayer && (creature.hp > 0)) }) !== -1
@@ -52,52 +84,44 @@ export default class Simulation extends React.Component {
             if (i >= initiativeOrder.length) {
                 i = 0
             }
-            initiativeOrder = this.attackEnemies(initiativeOrder[i], initiativeOrder)
+            // if the targeting order is random, create the targetingOrders
+            if (initiativeOrder[i].isPlayer) {
+                if (this.props.encounter.playerMethod === 0) {
+                    monsterTargetingOrder = this.attackingOrder(this.props.encounter.playerMethod, initiativeOrder[i].isPlayer, initiativeOrder)
+                }
+                initiativeOrder = this.attackEnemies(initiativeOrder[i], monsterTargetingOrder, initiativeOrder)
+            } else if (!initiativeOrder[i].isPlayer) {
+                if (this.props.encounter.monsterMethod === 0) {
+                    playerTargetingOrder = this.attackingOrder(this.props.encounter.monsterMethod, initiativeOrder[i].isPlayer, initiativeOrder)
+                }
+                initiativeOrder = this.attackEnemies(initiativeOrder[i], playerTargetingOrder, initiativeOrder)
+            }
             i++
         }
 
         return initiativeOrder
     }
 
-    
-    attackEnemies(creature, initiativeOrder) {
-        // determine who to attack
-        let enemyIndex = 0
-        if (creature.attackMethod === 0) { // random order attacks
-            let enemyIndices = []
-            for (let i=0; i < initiativeOrder.length; i++) {
-                if (initiativeOrder[i].isPlayer !== creature.isPlayer) {
-                    enemyIndices.push(i)
-                }
+    attackingOrder(method, isPlayer, initiativeOrder) {
+        let enemies = []
+        for (let i = 0; i < initiativeOrder.length; i++) {
+            if (initiativeOrder[i].isPlayer !== isPlayer) {
+                enemies.push({index: i, ...initiativeOrder[i]})
             }
-            if (enemyIndices.length <= 0) {
-                console.log('no enemies remaining')
-                return initiativeOrder
-            }
-            enemyIndex = enemyIndices[Math.floor(Math.random() * enemyIndices.length)]
-        } else {
-            let enemies = []
-            for (let i=0; i < initiativeOrder.length; i++) {
-                if (initiativeOrder[i].isPlayer !== creature.isPlayer) {
-                    enemies.push({index: i, hp: initiativeOrder[i].hp, ac: initiativeOrder[i].ac})
-                }
-            }
-            if (enemies.length <= 0) {
-                console.log('no enemies remaining')
-                return initiativeOrder
-            }
-            enemies = this.sortCreatures(creature.attackMethod, enemies)
-            enemyIndex = enemies[0].index // getting an "enemies is undefined" error here with weakest first targeting method
+        }
+        enemies = this.sortCreatures(method, enemies)
+        return enemies
+    }
+
+    attackEnemies(creature, enemies, initiativeOrder) {
+        // find first alive creature in that targeting order
+        let enemy = enemies.find(item => initiativeOrder[item.index].hp > 0)
+        if (!enemy) { // no living enemies remain
+            return initiativeOrder
         }
 
-        // attack them
-        if(this.rollAttack(creature.bonus) >= initiativeOrder[enemyIndex].ac) {
-            initiativeOrder[enemyIndex].hp -= this.rollDamage(creature.damage)
-        }
-
-        // filter out killed creatures
-        if (initiativeOrder[enemyIndex].hp <= 0) {
-            initiativeOrder.splice(enemyIndex, 1)
+        if ((this.rollAttack(creature.bonus) >= initiativeOrder[enemy.index].ac)) {
+            initiativeOrder[enemy.index].hp -= this.rollDamage(creature.damage)
         }
         return initiativeOrder
     }
@@ -116,14 +140,26 @@ export default class Simulation extends React.Component {
         return Math.floor(Math.random() * Math.floor(sides))+1;
     }
 
+    calculateMaxDamage(dice) {
+        let maxDamage = 0
+        dice.split(' ').forEach(damageDie => {
+            let dice = damageDie.split(/[+d]+/);
+            maxDamage += (parseInt(dice[0]) * parseInt(dice[1]))
+            if (dice.length === 3) {
+                maxDamage += parseInt(dice[2])
+            }
+        })
+        return maxDamage
+    }
+
     rollDamage(dice) {
         let damageDone = 0;
-        dice = dice.split(' ').forEach(damageDie => {
+        dice.split(' ').forEach(damageDie => {
             let dice = damageDie.split(/[+d]+/);
             for (let i = 0; i < parseInt(dice[0]); i++) {
                 damageDone += parseInt(this.rollDie(dice[1]));
-                if(dice.length === 3) {damageDone += parseInt(dice[2]);}
             }
+            if(dice.length === 3) {damageDone += parseInt(dice[2]);}
         })
         return damageDone
     }
