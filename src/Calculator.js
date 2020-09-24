@@ -3,6 +3,20 @@ import Creature from './Creature'
 import Simulation from './Simulation'
 import './Calculator.css'
 
+/*
+    TODO
+    create a simple multiattack option where the creature attacks multiple times with the same attack
+    create a complex multiattack option where the creature attacks with different attacks
+
+    1. refactor attacks to be an array
+    1.1 simple attacks is just copying the original attack multiple times
+    1.2 complex attacks has multiple input fields
+
+    2. refactor simulation to use the attacks in the creature's array
+
+    X. add a warning when someone adds a spellcasting enemy that their attack spells need to be added manually
+*/
+
 export default class Calculator extends React.Component {
     // add in names and then displays of how frequencly each player dies
     // use monsterData.json, filter in place. 1.6mb is big and may require a loading symbol, but would be worth it.

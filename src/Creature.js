@@ -1,7 +1,7 @@
 import React from 'react'
 import './Creature.css'
 import ContentEditable from 'react-contenteditable'
-import { Tooltip } from '@material-ui/core'
+import { Tooltip, createMuiTheme, MuiThemeProvider } from '@material-ui/core'
 
 export default class Creature extends React.Component {
     constructor(props) {
@@ -11,7 +11,6 @@ export default class Creature extends React.Component {
     }
 
     // return true if dice are valid
-    // this is not working properly
     validateDice(dice) {
         let retVal = true
         dice.split(' ').forEach(damageDie => {
@@ -39,14 +38,6 @@ export default class Creature extends React.Component {
         }
     }
 
-    // castToInt(input) {
-    //     if (input === "") {
-    //         return input
-    //     } else {
-    //         return parseInt(input)
-    //     }
-    // }
-
     handleUpdateStats = (newName, newHp, newAc, newBonus, newDamage, newInitiative) => {
         this.setState({ valid: this.validateStats(newName, newHp, newAc, newBonus, newDamage, newInitiative) })
         let newCreature = {
@@ -69,9 +60,18 @@ export default class Creature extends React.Component {
     }
 
     render() {
+        const theme = createMuiTheme({
+            overrides: {
+                MuiTooltip: {
+                    tooltip: {
+                        fontSize: "12px",
+                        maxWidth: "500px"
+                    }
+                }
+            }
+        })
         return (
             <div className="margin">
-
                 <div className="spread-right-left">
                     <ContentEditable
                         className={this.state.valid.name ? "name " : "error name"}
@@ -85,70 +85,69 @@ export default class Creature extends React.Component {
                         <button className="center-vertical" onClick={this.handleCopyCreature}>duplicate</button>
                     </div>
                 </div>
-                <div className="spread-right-left">
-                    <div>HP:&nbsp; </div>
-                    <Tooltip title={this.state.valid.hp ? "" : "HP must be a positive number"}>
-                        <input
-                            className={this.state.valid.hp ? "" : "error"}
-                            type="text"
-                            placeholder={"ex: 18"}
-                            value={this.props.stats.hp}
-                            onChange={event => this.handleUpdateStats(false, event.target.value, false, false, false, false)}
-                        ></input>                        
-                    </Tooltip>
+                <MuiThemeProvider theme={theme}>
+                    <div className="spread-right-left">
+                        <div>HP:&nbsp; </div>
+                        <Tooltip title={this.state.valid.hp ? "" : "HP must be a positive number"} arrow >
+                            <input
+                                className={this.state.valid.hp ? "" : "error"}
+                                type="text"
+                                placeholder={"ex: 18"}
+                                value={this.props.stats.hp}
+                                onChange={event => this.handleUpdateStats(false, event.target.value, false, false, false, false)}
+                            ></input>
+                        </Tooltip>
+                    </div>
+                    <div className="spread-right-left">
+                        <div>AC:&nbsp; </div>
+                        <Tooltip title={this.state.valid.ac ? "" : "AC must be a number"} arrow >
+                            <input
+                                className={this.state.valid.ac ? "" : "error"}
+                                type="text"
+                                placeholder={"ex: 16"}
+                                value={this.props.stats.ac}
+                                onChange={event => this.handleUpdateStats(false, false, event.target.value, false, false, false)}
+                            ></input>
+                        </Tooltip>
+                    </div>
+                    <div className="spread-right-left">
+                        <div>Attack Bonus:&nbsp; </div>
+                        <Tooltip title={this.state.valid.bonus ? "" : "Attack Bonus must be a number"} arrow >
+                            <input
+                                className={this.state.valid.bonus ? "" : "error"}
+                                type="text"
+                                placeholder={"ex: 5"}
+                                value={this.props.stats.bonus}
+                                onChange={event => this.handleUpdateStats(false, false, false, event.target.value, false, false)}
+                            ></input>
+                        </Tooltip>
 
-                </div>
-                <div className="spread-right-left">
-                    <div>AC:&nbsp; </div>
-                    <Tooltip title={this.state.valid.ac ? "" : "AC must be a number"}>
-                        <input
-                            className={this.state.valid.ac ? "" : "error"}
-                            type="text"
-                            placeholder={"ex: 16"}
-                            value={this.props.stats.ac}
-                            onChange={event => this.handleUpdateStats(false, false, event.target.value, false, false, false)}
-                        ></input>
-                    </Tooltip>
-
-                </div>
-                <div className="spread-right-left">
-                    <div>Attack Bonus:&nbsp; </div>
-                    <Tooltip title={this.state.valid.bonus ? "" : "Attack Bonus must be a number"} >
-                        <input
-                            className={this.state.valid.bonus ? "" : "error"}
-                            type="text"
-                            placeholder={"ex: 5"}
-                            value={this.props.stats.bonus}
-                            onChange={event => this.handleUpdateStats(false, false, false, event.target.value, false, false)}
-                        ></input>
-                    </Tooltip>
-                    
-                </div>
-                <div className="spread-right-left">
-                    <div>Damage Dice:&nbsp; </div>
-                    <Tooltip title={this.state.valid.damage ? "" : "Damage Dice must be entered as (dice)d(sides)+(bonus)"} >
-                        <input
-                            className={this.state.valid.damage ? "" : "error"}
-                            type="text"
-                            placeholder={"ex: 1d8+3 3d6"}
-                            value={this.props.stats.damage}
-                            onChange={event => this.handleUpdateStats(false, false, false, false, event.target.value, false)}
-                        ></input>
-                    </Tooltip>
-                </div>
-                <div className="spread-right-left">
-                    <div>Initiative Bonus:&nbsp; </div>
-                    <Tooltip title={this.state.valid.initiative ? "" : "Initiative Bonus must be a number"}>
-                        <input
-                            className={this.state.valid.initiative ? "" : "error"}
-                            type="text"
-                            placeholder={"ex: 2"}
-                            value={this.props.stats.initiative}
-                            onChange={event => this.handleUpdateStats(false, false, false, false, false, event.target.value)}
-                        ></input>                        
-                    </Tooltip>
-
-                </div>
+                    </div>
+                    <div className="spread-right-left">
+                        <div>Damage Dice:&nbsp; </div>
+                        <Tooltip title={this.state.valid.damage ? "" : "Damage Dice must be entered as (dice)d(sides)+(bonus)"} arrow>
+                            <input
+                                className={this.state.valid.damage ? "" : "error"}
+                                type="text"
+                                placeholder={"ex: 1d8+3 3d6"}
+                                value={this.props.stats.damage}
+                                onChange={event => this.handleUpdateStats(false, false, false, false, event.target.value, false)}
+                            ></input>
+                        </Tooltip>
+                    </div>
+                    <div className="spread-right-left">
+                        <div>Initiative Bonus:&nbsp; </div>
+                        <Tooltip title={this.state.valid.initiative ? "" : "Initiative Bonus must be a number"} arrow>
+                            <input
+                                className={this.state.valid.initiative ? "" : "error"}
+                                type="text"
+                                placeholder={"ex: 2"}
+                                value={this.props.stats.initiative}
+                                onChange={event => this.handleUpdateStats(false, false, false, false, false, event.target.value)}
+                            ></input>
+                        </Tooltip>
+                    </div>
+                </MuiThemeProvider>
             </div>
         )
     }

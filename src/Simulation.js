@@ -116,7 +116,7 @@ export default class Simulation extends React.Component {
     attackEnemies(creature, enemies, initiativeOrder) {
         // find first alive creature in that targeting order
         let enemy = enemies.find(item => initiativeOrder[item.index].hp > 0)
-        if (!enemy) { // no living enemies remain
+        if (!enemy) {
             return initiativeOrder
         }
 
