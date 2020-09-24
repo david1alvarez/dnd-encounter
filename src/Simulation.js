@@ -78,8 +78,8 @@ export default class Simulation extends React.Component {
 
         // cycle through the initiativeOrder array until one side dies
         let i = 0
-        while (initiativeOrder.findIndex(creature => { return (creature.isPlayer && (creature.hp > 0)) }) !== -1
-            && initiativeOrder.findIndex(creature => { return (!creature.isPlayer && (creature.hp > 0)) }) !== -1
+        while (initiativeOrder.some(creature => { return (creature.isPlayer && (creature.hp > 0)) })
+            && initiativeOrder.some(creature => { return (!creature.isPlayer && (creature.hp > 0)) })
         ) {
             if (i >= initiativeOrder.length) {
                 i = 0

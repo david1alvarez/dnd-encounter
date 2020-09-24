@@ -7,10 +7,16 @@
     justify-content: space-between;
 }
 
+.center-vertical {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 button {
     display: block;
-    margin-block-start: 1.33em;
-    margin-block-end: 1.33em;
+    margin-block-start: auto;
+    margin-block-end: auto;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
     max-height: 20px;
@@ -19,4 +25,23 @@ button {
 input::placeholder {
     opacity: 0.5;
     font-style: italic;
+}
+
+.name {
+    font-weight: bold;
+    font-size: 20px;
+    color: black;
+    background-color: white;
+    display: block;
+    margin-block-start: 25px;
+    margin-block-end:   25px;
+    margin-inline-start: 0px;
+    margin-inline-end: 20px;
+    min-height: 20px;
+    min-width: 200px;
+}
+
+.error { 
+    border: 1px solid red; 
+    background-color: pink
 }
