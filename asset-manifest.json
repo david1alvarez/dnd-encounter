@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/dnd-encounter/static/css/main.e0076133.chunk.css",
-    "main.js": "/dnd-encounter/static/js/main.d8862c5a.chunk.js",
-    "main.js.map": "/dnd-encounter/static/js/main.d8862c5a.chunk.js.map",
+    "main.css": "/dnd-encounter/static/css/main.17580962.chunk.css",
+    "main.js": "/dnd-encounter/static/js/main.f4500128.chunk.js",
+    "main.js.map": "/dnd-encounter/static/js/main.f4500128.chunk.js.map",
     "runtime-main.js": "/dnd-encounter/static/js/runtime-main.7f83624e.js",
     "runtime-main.js.map": "/dnd-encounter/static/js/runtime-main.7f83624e.js.map",
-    "static/js/2.83f81725.chunk.js": "/dnd-encounter/static/js/2.83f81725.chunk.js",
-    "static/js/2.83f81725.chunk.js.map": "/dnd-encounter/static/js/2.83f81725.chunk.js.map",
+    "static/js/2.67ce9039.chunk.js": "/dnd-encounter/static/js/2.67ce9039.chunk.js",
+    "static/js/2.67ce9039.chunk.js.map": "/dnd-encounter/static/js/2.67ce9039.chunk.js.map",
     "index.html": "/dnd-encounter/index.html",
-    "precache-manifest.16ef3fb6f644938d6040104122b06b70.js": "/dnd-encounter/precache-manifest.16ef3fb6f644938d6040104122b06b70.js",
+    "precache-manifest.c826b1bbf123f2a25f01d15fc336fb5e.js": "/dnd-encounter/precache-manifest.c826b1bbf123f2a25f01d15fc336fb5e.js",
     "service-worker.js": "/dnd-encounter/service-worker.js",
-    "static/css/main.e0076133.chunk.css.map": "/dnd-encounter/static/css/main.e0076133.chunk.css.map",
-    "static/js/2.83f81725.chunk.js.LICENSE.txt": "/dnd-encounter/static/js/2.83f81725.chunk.js.LICENSE.txt"
+    "static/css/main.17580962.chunk.css.map": "/dnd-encounter/static/css/main.17580962.chunk.css.map",
+    "static/js/2.67ce9039.chunk.js.LICENSE.txt": "/dnd-encounter/static/js/2.67ce9039.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7f83624e.js",
-    "static/js/2.83f81725.chunk.js",
-    "static/css/main.e0076133.chunk.css",
-    "static/js/main.d8862c5a.chunk.js"
+    "static/js/2.67ce9039.chunk.js",
+    "static/css/main.17580962.chunk.css",
+    "static/js/main.f4500128.chunk.js"
   ]
 }
